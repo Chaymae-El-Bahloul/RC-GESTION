@@ -200,7 +200,7 @@ def get_declarations(client_id=None, type_d="Tous", statut="Tous"):
     if type_d != "Tous": conds.append("d.type_decl=?"); params.append(type_d)
     if statut != "Tous": conds.append("d.statut=?"); params.append(statut)
     if conds: q += " WHERE " + " AND ".join(conds)
-    q += " ORDER BY d.annee DESC"
+    q += " ORDER BY d.id ASC"
     df = pd.read_sql(q, conn, params=params); conn.close()
     return df
 
@@ -340,32 +340,204 @@ def get_decl_par_type():
 
 # ── DEMO ──
 def seed_demo():
-    rows_pp = [
-        ('Physique','ALAOUI','Mohammed','AB123456','','',0,'RC001','IF001','PAT001','','Commerce','Trimestriel','RNR','0612000001','alaoui@mail.ma','Rue Hassan II','El Kelaa des Sraghna','Actif'),
-        ('Physique','BENALI','Fatima','CD789012','','',0,'RC002','IF002','PAT002','','Artisanat','Annuel','RNR','0613000002','benali@mail.ma','Av Mohammed V','Marrakech','Actif'),
-        ('Physique','CHRAIBI','Youssef','EF345678','','',0,'RC003','IF003','PAT003','','Transport','Trimestriel','RF','0614000003','','Rue Ibn Sina','El Kelaa des Sraghna','Actif'),
-    ]
-    rows_pm = [
-        ('Morale','','','','SARL ATLAS TRANSIT','SARL',500000,'RC100','IF100','PAT100','ICE100','Transport','Mensuel','RNR','0520000100','atlas@mail.ma','Zone Industrielle','El Kelaa des Sraghna','Actif'),
-        ('Morale','','','','STE IMMOBILIER SRAGHNA','SA',2000000,'RC101','IF101','PAT101','ICE101','Immobilier','Mensuel','RNR','0520000101','','Hay Riad','El Kelaa des Sraghna','Actif'),
-        ('Morale','','','','AUTO-ECOLE NAJAH','SARL',200000,'RC102','IF102','PAT102','ICE102','Formation','Trimestriel','RF','0520000102','najah@mail.ma','Centre Ville','El Kelaa des Sraghna','Actif'),
-    ]
+    """Insere des donnees demo realistes pour El Kelaa des Sraghna."""
     conn = get_conn(); c = conn.cursor()
-    for r in rows_pp + rows_pm:
+
+    # ── PERSONNES PHYSIQUES (commerçants, artisans, prestataires locaux) ──
+    pp = [
+        # (type_p, nom, prenom, cin, rs, fj, cap, rc, if_, pat, ice, secteur, mode_decl, regime, tel, email, adresse, ville, statut)
+        ('Physique','QACIMI','Rachid','A789456','','',0,'47821/2018','45612318','P-47821','','Commerce de detail','Trimestriel','RNR','0661234501','r.qacimi@gmail.com','Derb Lalla Fatima N12','El Kelaa des Sraghna','Actif'),
+        ('Physique','BOUTALEB','Khadija','BK234789','','',0,'51203/2019','48903127','P-51203','','Alimentation generale','Annuel','RNR','0672345602','','Hay El Massira Bloc 3','El Kelaa des Sraghna','Actif'),
+        ('Physique','HAMDAOUI','Abderrahim','T456123','','',0,'39847/2016','37821409','P-39847','','Boulangerie Patisserie','Trimestriel','RNR','0655678903','hamdaoui.boulangerie@gmail.com','Avenue Hassan II N45','El Kelaa des Sraghna','Actif'),
+        ('Physique','RHAZALI','Nadia','D234567','','',0,'62104/2021','59034218','P-62104','','Coiffure Beaute','Annuel','RF','0647891204','nadia.rhazali@hotmail.com','Rue Moulay Ismail N8','El Kelaa des Sraghna','Actif'),
+        ('Physique','MANSOURI','Hamid','S901234','','',0,'44512/2017','42301876','P-44512','','Materiel Agricole','Trimestriel','RNR','0660123405','mansouri.agri@gmail.com','Route de Benguerir Km2','El Kelaa des Sraghna','Actif'),
+        ('Physique','ZOUITEN','Amina','L567890','','',0,'58934/2020','55678234','P-58934','','Pharmacie','Mensuel','RNR','0678901236','','Avenue Mohammed V N22','El Kelaa des Sraghna','Actif'),
+        ('Physique','LAHRICHI','Mustapha','E123789','','',0,'36201/2015','34109823','P-36201','','Transport Marchandises','Trimestriel','RF','0664512307','lahrichi.trans@gmail.com','Quartier Industriel','El Kelaa des Sraghna','Actif'),
+        ('Physique','OUALI','Sanae','F890123','','',0,'70345/2022','67234901','P-70345','','Vetements Confection','Annuel','RNR','0651234508','sanae.ouali@gmail.com','Souk Had N17','El Kelaa des Sraghna','Actif'),
+        ('Physique','BENCHEKROUN','Yassine','G456789','','',0,'41789/2017','39567234','P-41789','','Informatique Reparation','Trimestriel','RNR','0692345609','yassine.tech@gmail.com','Hay Riad Rue 4 N3','El Kelaa des Sraghna','Actif'),
+        ('Physique','TAZI','Hafida','H234567','','',0,'55123/2019','52890341','P-55123','','Epicerie Fine Import','Annuel','RNR','0683456710','','Rue Ibn Khaldoun N31','Sidi Bou Othmane','Actif'),
+    ]
+
+    # ── PERSONNES MORALES (societes locales) ──
+    pm = [
+        ('Morale','','','','SARL TRANSPORT SRAGHNA','SARL',300000,'RC12345/Kelaa','43219087','PAT-RC12345','ICE-001234567000','Transport Voyageurs','Mensuel','RNR','0528471201','transport.sraghna@gmail.com','Zone Industrielle Lot 14','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','STE AGRICOLE HAOUZ PLUS','SARL',500000,'RC23456/Kelaa','54320198','PAT-RC23456','ICE-002345678000','Agriculture Elevage','Trimestriel','RNR','0528471302','haouz.agri@gmail.com','Route Marrakech Km5','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','AUTO-ECOLE AL AMAL','SARL',150000,'RC34567/Kelaa','61230987','PAT-RC34567','ICE-003456789000','Formation Conduite','Trimestriel','RF','0528471403','autoecole.alamal@gmail.com','Avenue Bir Anzarane N7','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','SARL BATI CONSTRUCT','SARL',800000,'RC45678/Kelaa','72341098','PAT-RC45678','ICE-004567890000','BTP Construction','Mensuel','RNR','0528471504','bati.construct@gmail.com','Hay El Wifaq Lot 8','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','STE IMMOBILIER REGHAYA','SA',2000000,'RC56789/Kelaa','83452109','PAT-RC56789','ICE-005678901000','Immobilier Promotion','Mensuel','RNR','0528471605','immo.reghaya@gmail.com','Rue Al Qods N15','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','SARL AL BARAKA COMMERCE','SARL',200000,'RC67890/Kelaa','91234567','PAT-RC67890','ICE-006789012000','Commerce Gros Detail','Trimestriel','RNR','0528471706','albaraka.com@gmail.com','Souk Hebdomadaire Bloc B','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','STE OLIVE OR','SARL',1200000,'RC78901/Kelaa','10234567','PAT-RC78901','ICE-007890123000','Huilerie Olive','Trimestriel','RNR','0528471807','olive.or@gmail.com','Route Oulad Berhil Km3','El Kelaa des Sraghna','Actif'),
+        ('Morale','','','','SARL MINOTERIE ATLAS','SARL',600000,'RC89012/Kelaa','11345678','PAT-RC89012','ICE-008901234000','Minoterie Stockage','Mensuel','RNR','0528471908','minoterie.atlas@gmail.com','Zone Industrielle Lot 22','El Kelaa des Sraghna','Actif'),
+    ]
+
+    # Insertion clients
+    for r in pp + pm:
         try:
             c.execute("""INSERT INTO clients (type_personne,nom,prenom,cin,raison_sociale,forme_juridique,
                 capital_social,rc,if_fiscal,patente,ice,secteur_activite,mode_declaration,regime_fiscal,
                 telephone,email,adresse,ville,statut) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", r)
         except: pass
     conn.commit()
-    df_c = pd.read_sql("SELECT id FROM clients LIMIT 5", conn)
-    for cid in df_c['id'].tolist():
-        for tp,per in [('TVA','T1 2024'),('TVA','T2 2024'),('IS','Annuel 2023'),('IR','Annuel 2023'),('CNSS','Janvier 2024')]:
+
+    # Recuperer tous les IDs inseres
+    df_c = pd.read_sql("SELECT id, mode_declaration, secteur_activite, type_personne FROM clients ORDER BY id", conn)
+
+    # ── DECLARATIONS realistes par client ──
+    decls_pp = {
+        "Trimestriel": [
+            ("TVA","T1 2024",2024), ("TVA","T2 2024",2024), ("TVA","T3 2024",2024), ("TVA","T4 2023",2023),
+            ("IR","Annuel 2023",2023), ("CNSS","Janvier 2024",2024), ("CNSS","Fevrier 2024",2024),
+            ("CNSS","Mars 2024",2024),
+        ],
+        "Annuel": [
+            ("IR","Annuel 2023",2023), ("IR","Annuel 2022",2022),
+            ("TVA","Annuel 2023",2023), ("CNSS","Annuel 2023",2023),
+        ],
+        "Mensuel": [
+            ("TVA","Janvier 2024",2024), ("TVA","Fevrier 2024",2024), ("TVA","Mars 2024",2024),
+            ("TVA","Avril 2024",2024), ("IR","Annuel 2023",2023), ("CNSS","Janvier 2024",2024),
+        ],
+    }
+    decls_pm = {
+        "Mensuel": [
+            ("TVA","Janvier 2024",2024), ("TVA","Fevrier 2024",2024), ("TVA","Mars 2024",2024),
+            ("TVA","Avril 2024",2024), ("TVA","Mai 2024",2024),
+            ("IS","Annuel 2023",2023), ("IS","Annuel 2022",2022),
+            ("CNSS","Janvier 2024",2024), ("CNSS","Fevrier 2024",2024), ("CNSS","Mars 2024",2024),
+        ],
+        "Trimestriel": [
+            ("TVA","T1 2024",2024), ("TVA","T2 2024",2024), ("TVA","T3 2023",2023), ("TVA","T4 2023",2023),
+            ("IS","Annuel 2023",2023), ("CNSS","T1 2024",2024), ("CNSS","T2 2024",2024),
+        ],
+    }
+
+    montants_secteur = {
+        "Transport Voyageurs": (8000, 45000),
+        "Agriculture Elevage": (5000, 30000),
+        "BTP Construction": (15000, 90000),
+        "Immobilier Promotion": (20000, 120000),
+        "Commerce Gros Detail": (3000, 20000),
+        "Huilerie Olive": (10000, 60000),
+        "Minoterie Stockage": (12000, 70000),
+        "Commerce de detail": (1500, 8000),
+        "Alimentation generale": (800, 5000),
+        "Boulangerie Patisserie": (1200, 6000),
+        "Pharmacie": (3000, 15000),
+        "Transport Marchandises": (2000, 12000),
+        "Materiel Agricole": (2500, 14000),
+        "Informatique Reparation": (500, 3000),
+    }
+
+    # Profil de risque par secteur : probabilite d etre en retard (0.0 = jamais, 1.0 = toujours)
+    risque_secteur = {
+        # Faible risque — secteurs organises, grands chiffres
+        "Pharmacie":              0.05,
+        "Immobilier Promotion":   0.08,
+        "Minoterie Stockage":     0.10,
+        "Huilerie Olive":         0.10,
+        "BTP Construction":       0.15,
+        # Risque moyen
+        "Transport Voyageurs":    0.25,
+        "Agriculture Elevage":    0.30,
+        "Materiel Agricole":      0.30,
+        "Transport Marchandises": 0.35,
+        "Formation Conduite":     0.35,
+        # Risque eleve — petits commercants, gestion manuelle
+        "Commerce Gros Detail":   0.55,
+        "Commerce de detail":     0.60,
+        "Alimentation generale":  0.65,
+        "Boulangerie Patisserie":  0.50,
+        "Vetements Confection":   0.70,
+        "Informatique Reparation":0.75,
+        "Coiffure Beaute":        0.80,
+    }
+
+    for _, row in df_c.iterrows():
+        cid = int(row["id"])
+        mode = row["mode_declaration"]
+        secteur = row["secteur_activite"]
+        is_pm = row["type_personne"] == "Morale"
+        decl_list = (decls_pm if is_pm else decls_pp).get(mode, decls_pp["Annuel"])
+        min_m, max_m = montants_secteur.get(secteur, (1000, 15000))
+        prob_retard = risque_secteur.get(secteur, 0.40)
+        for tp, per, annee in decl_list:
+            montant = round(random.uniform(min_m, max_m), 2)
+            # Paiement coherent avec le risque : les bons payeurs paient plus
+            if random.random() > prob_retard:
+                paye = round(montant * random.uniform(0.90, 1.0), 2)
+                statut = "Deposee"
+            else:
+                rand = random.random()
+                if rand < 0.5:
+                    statut = "En retard"
+                    paye = round(montant * random.uniform(0, 0.4), 2)
+                else:
+                    statut = "En attente"
+                    paye = round(montant * random.uniform(0.3, 0.7), 2)
             try:
                 c.execute("""INSERT INTO declarations (client_id,type_decl,annee,periode,montant_du,montant_paye,statut)
-                    VALUES (?,?,?,?,?,?,?)""",
-                    (cid, tp, 2024, per, round(random.uniform(1000,50000),2),
-                     round(random.uniform(0,30000),2),
-                     random.choice(['Deposee','En attente','En retard'])))
+                    VALUES (?,?,?,?,?,?,?)""", (cid, tp, annee, per, montant, paye, statut))
             except: pass
+
+    # ── PIECES COMPTABLES realistes (6 mois de factures) ──
+    import calendar as cal
+    pieces_types = ["Facture Vente","Facture Achat","Note de Frais"]
+    today = date.today()
+    for _, row in df_c.iterrows():
+        cid = int(row["id"])
+        secteur = row["secteur_activite"]
+        min_m, max_m = montants_secteur.get(secteur, (1000, 15000))
+        for i in range(6, 0, -1):
+            y = today.year if today.month > i else today.year - 1
+            m = (today.month - i) % 12 or 12
+            last_day = cal.monthrange(y, m)[1]
+            # Facture vente (CA)
+            d_p = f"{y}-{m:02d}-{random.randint(5, last_day):02d}"
+            ht = round(random.uniform(min_m, max_m), 2)
+            tva = round(ht * 0.20, 2)
+            ttc = round(ht + tva, 2)
+            try:
+                c.execute("""INSERT INTO pieces_comptables
+                    (client_id,type_piece,numero,date_piece,libelle,montant_ht,taux_tva,montant_tva,montant_ttc,statut)
+                    VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                    (cid, "Facture Vente", f"FV-{cid:03d}-{y}{m:02d}",
+                     d_p, f"Vente {cal.month_name[m]} {y}", ht, 20.0, tva, ttc, "Validee"))
+            except: pass
+            # Facture achat (charges)
+            ht2 = round(random.uniform(min_m*0.3, min_m*0.9), 2)
+            tva2 = round(ht2 * 0.20, 2)
+            ttc2 = round(ht2 + tva2, 2)
+            d_p2 = f"{y}-{m:02d}-{random.randint(1, 10):02d}"
+            try:
+                c.execute("""INSERT INTO pieces_comptables
+                    (client_id,type_piece,numero,date_piece,libelle,montant_ht,taux_tva,montant_tva,montant_ttc,statut)
+                    VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                    (cid, "Facture Achat", f"FA-{cid:03d}-{y}{m:02d}",
+                     d_p2, f"Achat fournisseur {cal.month_name[m]} {y}", ht2, 20.0, tva2, ttc2, "Validee"))
+            except: pass
+
+    # ── PAIE (employes pour les PM) ──
+    employes = [
+        ("KARIMI","Said","BE456789"), ("SENHAJI","Malika","F234901"),
+        ("RAMI","Omar","G789234"), ("IDRISSI","Zineb","H345678"),
+    ]
+    for _, row in df_c.iterrows():
+        if row["type_personne"] != "Morale": continue
+        cid = int(row["id"])
+        nb_emp = random.randint(1, 3)
+        for emp in employes[:nb_emp]:
+            for mois in [1, 2, 3, 4]:
+                brut = round(random.uniform(3500, 12000), 2)
+                calc = calculer_paie(brut)
+                net = round(brut - calc["cnss_salariale"] - calc["amo_salariale"] - calc["ir_mensuel"], 2)
+                try:
+                    c.execute("""INSERT INTO paie
+                        (client_id,employe_nom,employe_prenom,employe_cin,mois,annee,salaire_brut,
+                         cnss_salariale,amo_salariale,ir_mensuel,cnss_patronale,amo_patronale,salaire_net,statut)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                        (cid, emp[0], emp[1], emp[2], mois, 2024, brut,
+                         calc["cnss_salariale"], calc["amo_salariale"], calc["ir_mensuel"],
+                         calc["cnss_patronale"], calc["amo_patronale"], net, "Calculee"))
+                except: pass
+
     conn.commit(); conn.close()

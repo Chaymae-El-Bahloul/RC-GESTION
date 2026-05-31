@@ -9,6 +9,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import db
+import pdf_reports
+import ai
 
 st.set_page_config(page_title="RC Gestion", page_icon="", layout="wide", initial_sidebar_state="expanded")
 db.init_db()
@@ -396,16 +398,18 @@ label {{ color: {T["muted"]} !important; font-size: .82rem !important; font-weig
 .stButton>button:active {{ transform: translateY(0) !important; }}
 
 .stDownloadButton>button {{
-    background: linear-gradient(135deg, {T["green"]}, #0a7850) !important;
-    color: #fff !important; border: none !important;
-    border-radius: 9px !important; font-weight: 600 !important;
-    font-size: .86rem !important;
+    background: linear-gradient(135deg, #1ab87a, #12a066) !important;
+    color: #ffffff !important; border: none !important;
+    border-radius: 9px !important; font-weight: 700 !important;
+    font-size: .88rem !important; letter-spacing: .3px !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
     box-shadow: 0 3px 14px rgba(15,144,96,.3) !important;
     transition: all .2s ease !important;
 }}
 .stDownloadButton>button:hover {{
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 24px rgba(15,144,96,.35) !important;
+    box-shadow: 0 8px 24px rgba(15,144,96,.45) !important;
+    background: linear-gradient(135deg, #22d48e, #16b878) !important;
 }}
 
 /* ══════════════════════════════
@@ -986,6 +990,33 @@ def page_dashboard():
         {"val":s["creations"],                 "label":"Creations",     "color":"neutral","sub":"En cours"},
     ],cols=4)
 
+    # ── SECTION IA — ALERTES INTELLIGENTES ──
+    section("Intelligence Artificielle — Alertes Predictives")
+    with st.spinner("Analyse IA en cours..."):
+        anomalies = ai.detecter_anomalies_declarations()
+        if anomalies is not None and not anomalies.empty:
+            al_danger(f"IA : {len(anomalies)} declaration(s) avec montant anormal detecte(s)",
+                      "Le modele Isolation Forest a detecte des valeurs statistiquement inhabituelles.")
+            st.dataframe(anomalies, use_container_width=True, hide_index=True)
+        else:
+            al_ok("IA : Aucune anomalie detectee dans les montants des declarations.")
+
+        df_all_c = db.get_clients(statut="Actif")
+        if not df_all_c.empty:
+            risques = []
+            for _, cli in df_all_c.iterrows():
+                for type_d in ["TVA","IS","IR"]:
+                    r = ai.predire_risque_retard(cli["id"], type_d)
+                    if r is not None and r >= 0.6:
+                        nom = cli.get("raison_sociale") or f"{cli.get('prenom','')} {cli.get('nom','')}".strip()
+                        risques.append({"Client": nom, "Type": type_d, "Risque": f"{int(r*100)}%"})
+            if risques:
+                al_warn(f"IA : {len(risques)} risque(s) de retard predits (>60% de probabilite)",
+                        "Recommandation : relancer ces clients avant l'echeance.")
+                st.dataframe(pd.DataFrame(risques), use_container_width=True, hide_index=True)
+            else:
+                al_ok("IA : Aucun risque de retard eleve detecte parmi les clients actifs.")
+
     if s["decl_retard"]>0:
         section("Declarations en Retard")
         df_r=db.get_declarations(statut="En retard")
@@ -1151,7 +1182,10 @@ def page_declarations():
         l1,l2=st.columns(2); ft=l1.selectbox("Type",["Tous"]+TYPES_DECL,key="dlt"); fs=l2.selectbox("Statut",["Tous"]+STATUTS_DECL,key="dls")
         df_d=db.get_declarations(type_d=ft,statut=fs); st.caption(f"{len(df_d)} declaration(s)")
         if not df_d.empty:
-            dl,_=st.columns([1,6]); dl.download_button("Exporter Excel",excel_bytes(df_d),f"decl_{datetime.now():%Y%m%d}.xlsx",mime="application/vnd.ms-excel",use_container_width=True)
+            ex1, ex2, _ = st.columns([1, 1, 5])
+            ex1.download_button("Exporter Excel", excel_bytes(df_d), f"decl_{datetime.now():%Y%m%d}.xlsx", mime="application/vnd.ms-excel", use_container_width=True)
+            pdf_decl = pdf_reports.rapport_declarations(df_d)
+            ex2.download_button("Exporter PDF", pdf_decl, f"declarations_{datetime.now():%Y%m%d}.pdf", mime="application/pdf", use_container_width=True)
             cols_show=[c for c in df_d.columns if c not in ("client_id","type_personne")]
             st.dataframe(df_d[cols_show],use_container_width=True,hide_index=True)
             section("Mise a Jour Rapide")
@@ -1312,9 +1346,32 @@ def page_paie():
         df_p=db.get_paie()
         if df_p.empty: al_ok("Aucun bulletin de paie."); return
         st.caption(f"{len(df_p)} bulletin(s)")
-        dl,_=st.columns([1,6]); dl.download_button("Exporter Excel",excel_bytes(df_p),f"paie_{datetime.now():%Y%m%d}.xlsx",mime="application/vnd.ms-excel",use_container_width=True)
+        ex1, ex2, _ = st.columns([1, 1, 5])
+        ex1.download_button("Exporter Excel", excel_bytes(df_p), f"paie_{datetime.now():%Y%m%d}.xlsx", mime="application/vnd.ms-excel", use_container_width=True)
         disp=df_p.copy(); disp['mois']=disp['mois'].apply(lambda m:db.MOIS_NOMS[int(m)] if pd.notnull(m) and int(m) in range(1,13) else str(m))
-        st.dataframe(disp,use_container_width=True,hide_index=True)
+        st.dataframe(disp, use_container_width=True, hide_index=True)
+
+        section("Telecharger un Bulletin PDF")
+        opts_paie = client_opts()
+        if opts_paie:
+            sel_cli_paie = st.selectbox("Choisir un client", list(opts_paie.keys()), key="paie_pdf_cli")
+            cid_paie = opts_paie[sel_cli_paie]
+            df_cli_paie = db.get_paie(client_id=cid_paie)
+            if not df_cli_paie.empty:
+                df_cli_paie['label'] = df_cli_paie.apply(
+                    lambda r: f"{r['employe']} — {db.MOIS_NOMS[int(r['mois'])]} {int(r['annee'])}", axis=1)
+                sel_bul = st.selectbox("Choisir un bulletin", df_cli_paie['label'].tolist(), key="paie_pdf_bul")
+                row_bul = df_cli_paie[df_cli_paie['label'] == sel_bul].iloc[0].to_dict()
+                cli_info = db.get_client(cid_paie)
+                pdf_bul = pdf_reports.bulletin_paie(row_bul, cli_info)
+                employe_fn = row_bul.get('employe','employe').replace(' ','_')
+                st.download_button(
+                    f"Telecharger le bulletin PDF — {sel_bul}",
+                    data=pdf_bul,
+                    file_name=f"bulletin_{employe_fn}_{int(row_bul['mois'])}_{int(row_bul['annee'])}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
 
 
 # ══════════════════════════════════════════════════════════
@@ -1418,7 +1475,25 @@ def page_rapports():
         if not df_d.empty: df_d.to_excel(w,index=False,sheet_name="Declarations")
         if not df_p.empty: df_p.to_excel(w,index=False,sheet_name="Comptabilite")
         db.get_paie().to_excel(w,index=False,sheet_name="Paie"); db.get_creations().to_excel(w,index=False,sheet_name="Creations")
-    st.download_button("Telecharger le Rapport Complet Excel — Toutes Feuilles",data=buf.getvalue(),file_name=f"rapport_{datetime.now():%Y%m%d_%H%M}.xlsx",mime="application/vnd.ms-excel",use_container_width=True)
+
+    r1, r2 = st.columns(2)
+    r1.download_button("Telecharger le Rapport Complet Excel — Toutes Feuilles",data=buf.getvalue(),file_name=f"rapport_{datetime.now():%Y%m%d_%H%M}.xlsx",mime="application/vnd.ms-excel",use_container_width=True)
+
+    stats_g = db.get_stats()
+    pdf_g = pdf_reports.rapport_general(stats_g, clients_df=df_c, declarations_df=df_d)
+    r2.download_button("Telecharger le Rapport General PDF",data=pdf_g,file_name=f"rapport_cabinet_{datetime.now():%Y%m%d}.pdf",mime="application/pdf",use_container_width=True)
+
+    section("Rapport PDF par Client")
+    opts_rc = client_opts()
+    if opts_rc:
+        sel_rc = st.selectbox("Choisir un client", list(opts_rc.keys()), key="rpt_cli")
+        cid_rc = opts_rc[sel_rc]
+        cli_rc = db.get_client(cid_rc)
+        decl_rc = db.get_declarations(client_id=cid_rc)
+        paie_rc = db.get_paie(client_id=cid_rc)
+        pdf_cli = pdf_reports.rapport_client(cli_rc, declarations=decl_rc, paie=paie_rc)
+        nom_rc = (cli_rc.get("raison_sociale") or f"{cli_rc.get('prenom','')}_{cli_rc.get('nom','')}").replace(" ","_")
+        st.download_button(f"Telecharger la Fiche PDF — {sel_rc}",data=pdf_cli,file_name=f"fiche_{nom_rc}.pdf",mime="application/pdf",use_container_width=True)
 
 
 # ══════════════════════════════════════════════════════════
@@ -1487,6 +1562,188 @@ def page_alertes():
 
 
 # ══════════════════════════════════════════════════════════
+#  PAGE 9 — INTELLIGENCE ARTIFICIELLE
+# ══════════════════════════════════════════════════════════
+def page_ia():
+    hero("Intelligence Artificielle", "Predictions · Anomalies · Previsions CA — Random Forest & Isolation Forest", "IA")
+
+    tab_retard, tab_ca, tab_anomalies = st.tabs([
+        "Prediction Retards", "Prevision CA", "Detection Anomalies"
+    ])
+
+    # ── TAB 1 : PREDICTION RETARD ──
+    with tab_retard:
+        section("Modele : Random Forest — Risque de Retard de Declaration")
+        st.markdown(f"""
+        <div style='background:{T["sky_bg"]};border:1px solid {T["sky_brd"]};border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:.87rem;color:{T["muted"]}'>
+        <b style='color:{T["sky"]}'>Comment ca fonctionne ?</b><br>
+        Le modele Random Forest analyse l'historique des declarations (type, montant, secteur, mode de declaration)
+        et calcule la probabilite qu'un client soit en retard pour sa prochaine declaration.
+        Un risque &gt; 60% declanche une alerte de relance.
+        </div>""", unsafe_allow_html=True)
+
+        opts = client_opts()
+        if not opts:
+            al_warn("Ajoutez des clients et des declarations pour activer l'IA.")
+        else:
+            col1, col2 = st.columns(2)
+            sel_cli = col1.selectbox("Choisir un client", list(opts.keys()), key="ia_cli")
+            sel_type = col2.selectbox("Type de declaration", ["TVA","IS","IR","CNSS","Patente"], key="ia_type")
+            cid_ia = opts[sel_cli]
+
+            if st.button("Analyser le Risque", key="ia_btn", use_container_width=True):
+                with st.spinner("Analyse en cours..."):
+                    risque = ai.predire_risque_retard(cid_ia, sel_type)
+                if risque is None:
+                    al_warn("Donnees insuffisantes pour entrainer le modele (minimum 5 declarations necessaires).")
+                else:
+                    pct = int(risque * 100)
+                    couleur = T["red"] if pct >= 60 else T["amber"] if pct >= 35 else T["green"]
+                    niveau = "ELEVE — Relance recommandee" if pct >= 60 else "MODERE — A surveiller" if pct >= 35 else "FAIBLE — Situation normale"
+                    st.markdown(f"""
+                    <div style='background:{T["card"]};border:2px solid {couleur};border-radius:14px;padding:24px;text-align:center;margin:16px 0'>
+                      <div style='font-size:3rem;font-weight:800;color:{couleur}'>{pct}%</div>
+                      <div style='font-size:1rem;color:{T["muted"]};margin-top:6px'>Probabilite de retard — {sel_type}</div>
+                      <div style='font-size:.85rem;font-weight:700;color:{couleur};margin-top:8px;
+                                  background:{couleur}15;border-radius:8px;padding:6px 14px;display:inline-block'>
+                        {niveau}
+                      </div>
+                    </div>""", unsafe_allow_html=True)
+
+            section("Analyse de tous les clients actifs")
+            if st.button("Lancer l'analyse globale", key="ia_global"):
+                with st.spinner("Analyse de tous les clients..."):
+                    df_actifs = db.get_clients(statut="Actif")
+                    resultats = []
+                    for _, cli in df_actifs.iterrows():
+                        for td in ["TVA","IS","IR"]:
+                            r = ai.predire_risque_retard(cli["id"], td)
+                            if r is not None:
+                                nom = cli.get("raison_sociale") or f"{cli.get('prenom','')} {cli.get('nom','')}".strip()
+                                resultats.append({"Client": nom, "Type": td, "Risque": f"{int(r*100)}%",
+                                                  "Niveau": "Eleve" if r>=0.6 else "Modere" if r>=0.35 else "Faible"})
+                if resultats:
+                    df_res = pd.DataFrame(resultats)
+                    kpi_row([
+                        {"val": len(df_res[df_res["Niveau"]=="Eleve"]),  "label":"Risques Eleves",  "color":"red"},
+                        {"val": len(df_res[df_res["Niveau"]=="Modere"]), "label":"Risques Moderes", "color":"amber"},
+                        {"val": len(df_res[df_res["Niveau"]=="Faible"]), "label":"Risques Faibles", "color":"green"},
+                    ], cols=3)
+                    st.dataframe(df_res, use_container_width=True, hide_index=True)
+                else:
+                    al_warn("Donnees insuffisantes pour l'analyse globale.")
+
+    # ── TAB 2 : PREVISION CA ──
+    with tab_ca:
+        section("Modele : Regression Lineaire — Prevision du Chiffre d'Affaires")
+        st.markdown(f"""
+        <div style='background:{T["sky_bg"]};border:1px solid {T["sky_brd"]};border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:.87rem;color:{T["muted"]}'>
+        <b style='color:{T["sky"]}'>Comment ca fonctionne ?</b><br>
+        La regression lineaire analyse les factures de vente historiques du client
+        et projette le chiffre d'affaires probable pour le mois suivant.
+        Necessite au minimum 3 mois de donnees de facturation.
+        </div>""", unsafe_allow_html=True)
+
+        opts2 = client_opts()
+        if opts2:
+            sel2 = st.selectbox("Choisir un client", list(opts2.keys()), key="ca_cli")
+            cid2 = opts2[sel2]
+
+            # BOUTON DEMO JURY
+            col_demo, col_reset = st.columns([3, 1])
+            with col_demo:
+                if st.button("🎲 Generer donnees demo (6 mois)", key="ca_demo_btn", use_container_width=True):
+                    import random, calendar
+                    today = date.today()
+                    conn_demo = db.get_conn()
+                    base_ca = random.uniform(25000, 80000)
+                    for i in range(6, 0, -1):
+                        y = today.year if today.month > i else today.year - 1
+                        m = (today.month - i) % 12 or 12
+                        last_day = calendar.monthrange(y, m)[1]
+                        d_piece = f"{y}-{m:02d}-{random.randint(1, last_day):02d}"
+                        montant_ht = round(base_ca * random.uniform(0.85, 1.20), 2)
+                        tva = round(montant_ht * 0.20, 2)
+                        ttc = round(montant_ht + tva, 2)
+                        conn_demo.execute(
+                            "INSERT INTO pieces_comptables (client_id,type_piece,numero,date_piece,libelle,montant_ht,taux_tva,montant_tva,montant_ttc,statut) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                            (cid2, "Facture Vente", f"FV-DEMO-{y}{m:02d}", d_piece,
+                             f"CA Demo {calendar.month_name[m]} {y}",
+                             montant_ht, 20.0, tva, ttc, "Validee"))
+                    conn_demo.commit(); conn_demo.close()
+                    st.success("✅ 6 mois generes ! Cliquez sur Calculer la Prevision CA")
+                    st.rerun()
+            with col_reset:
+                if st.button("🗑️ Reset", key="ca_reset_btn", use_container_width=True):
+                    conn_r = db.get_conn()
+                    conn_r.execute("DELETE FROM pieces_comptables WHERE client_id=? AND numero LIKE 'FV-DEMO-%'", (cid2,))
+                    conn_r.commit(); conn_r.close()
+                    st.warning("Donnees demo supprimees.")
+                    st.rerun()
+
+            if st.button("Calculer la Prevision CA", key="ca_btn", use_container_width=True):
+                with st.spinner("Calcul de la prevision..."):
+                    ca_prevu = ai.prevoir_ca_prochain_mois(cid2)
+                    df_hist = db.get_pieces(client_id=cid2, type_p="Facture Vente")
+                if ca_prevu is None:
+                    al_warn("Donnees insuffisantes (minimum 3 mois de facturation requis).")
+                else:
+                    st.markdown(f"""
+                    <div style='background:{T["card"]};border:2px solid {T["green"]};border-radius:14px;
+                                padding:24px;text-align:center;margin:16px 0'>
+                      <div style='font-size:.8rem;color:{T["muted"]};text-transform:uppercase;letter-spacing:1px'>
+                        Prevision CA — Mois Prochain
+                      </div>
+                      <div style='font-size:2.4rem;font-weight:800;color:{T["green"]};margin-top:8px'>
+                        {ca_prevu:,.2f} MAD
+                      </div>
+                      <div style='font-size:.78rem;color:{T["muted"]};margin-top:6px'>
+                        Base : regression lineaire sur l'historique des factures de vente
+                      </div>
+                    </div>""", unsafe_allow_html=True)
+
+                    if not df_hist.empty:
+                        df_hist['date_piece'] = pd.to_datetime(df_hist['date_piece'], errors='coerce')
+                        df_mois = df_hist.groupby(df_hist['date_piece'].dt.to_period('M'))['montant_ttc'].sum().reset_index()
+                        df_mois['mois'] = df_mois['date_piece'].astype(str)
+                        fig_ca = px.area(df_mois, x='mois', y='montant_ttc',
+                                         title="Historique CA mensuel (TTC)",
+                                         color_discrete_sequence=[T['sky']])
+                        fig_ca.add_scatter(x=[str(pd.Period.now('M')+1)], y=[ca_prevu],
+                                           mode='markers', marker=dict(size=14, color=T['green'], symbol='star'),
+                                           name=f"Prevision: {ca_prevu:,.0f} MAD")
+                        fig_ca.update_layout(**CHART(), title=dict(font=dict(color=T['text'])))
+                        st.plotly_chart(fig_ca, use_container_width=True)
+
+    # ── TAB 3 : ANOMALIES ──
+    with tab_anomalies:
+        section("Modele : Isolation Forest — Detection d'Anomalies")
+        st.markdown(f"""
+        <div style='background:{T["sky_bg"]};border:1px solid {T["sky_brd"]};border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:.87rem;color:{T["muted"]}'>
+        <b style='color:{T["sky"]}'>Comment ca fonctionne ?</b><br>
+        L'algorithme Isolation Forest detecte automatiquement les declarations dont les montants
+        sont statistiquement anormaux par rapport au reste des donnees, sans avoir besoin de donnees labellisees.
+        Utile pour detecter des erreurs de saisie ou des fraudes potentielles.
+        </div>""", unsafe_allow_html=True)
+
+        opts3 = {"Tous les clients": None}
+        opts3.update(client_opts())
+        sel3 = st.selectbox("Perimetre d'analyse", list(opts3.keys()), key="ano_cli")
+        cid3 = opts3[sel3]
+
+        if st.button("Lancer la Detection d'Anomalies", key="ano_btn", use_container_width=True):
+            with st.spinner("Analyse en cours..."):
+                anomalies = ai.detecter_anomalies_declarations(client_id=cid3)
+            if anomalies is None or anomalies.empty:
+                al_ok("Aucune anomalie detectee. Toutes les declarations semblent normales.")
+            else:
+                al_danger(f"{len(anomalies)} anomalie(s) detectee(s)",
+                          "Ces declarations ont des montants statistiquement inhabituels. Verifiez les saisies.")
+                st.dataframe(anomalies, use_container_width=True, hide_index=True)
+                st.caption("Note : Une anomalie ne signifie pas necessairement une erreur — c'est un signal a verifier.")
+
+
+# ══════════════════════════════════════════════════════════
 #  ROUTING
 # ══════════════════════════════════════════════════════════
 PAGES_STAFF={
@@ -1498,6 +1755,7 @@ PAGES_STAFF={
     "Creation d Entreprises":page_creation,
     "Rapports et Analyses":  page_rapports,
     "Alertes":               page_alertes,
+    "Intelligence Artificielle": page_ia,
 }
 PAGES_CLIENT={"Mon Dossier":page_dashboard}
 
