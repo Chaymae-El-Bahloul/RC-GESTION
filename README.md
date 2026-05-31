@@ -6,7 +6,7 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red?style=for-the-badge&logo=streamlit)
 ![SQLite](https://img.shields.io/badge/SQLite-3-lightblue?style=for-the-badge&logo=sqlite)
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?style=for-the-badge&logo=scikit-learn)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
 
 **Plateforme web de gestion comptable, fiscale et sociale enrichie d'Intelligence Artificielle**
 
@@ -189,13 +189,6 @@ Université Cadi Ayyad — Marrakech
 
 ---
 
-## 📄 Licence
 
-Ce projet est développé dans le cadre d'un stage académique.  
-© 2025 — EST El Kelaa des Sraghna · Université Cadi Ayyad
 
----
 
-<div align="center">
-  <i>Développé avec ❤️ à El Kelaa des Sraghna, Maroc 🇲🇦</i>
-</div>
