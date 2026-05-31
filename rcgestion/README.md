@@ -1,4 +1,4 @@
-# ⚖️ CR Gestion Pro
+# RC Gestion Pro
 ## Plateforme Integree de Gestion Comptable et Fiscale
 > Stage Technique — 2eme annee Ingenierie des Donnees
 > Ecole Superieure de Technologie — El Kelaa des Sraghna
