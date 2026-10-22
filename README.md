@@ -1,194 +1,359 @@
-#  RC Gestion  — Plateforme Intelligente de Gestion Comptable et Fiscale
-
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red?style=for-the-badge&logo=streamlit)
-![SQLite](https://img.shields.io/badge/SQLite-3-lightblue?style=for-the-badge&logo=sqlite)
-![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?style=for-the-badge&logo=scikit-learn)
+<img src="assets/header.svg" alt="Chaymae El Bahloul, étudiante en Science des Données" width="100%">
 
+<br>
 
-**Plateforme web de gestion comptable, fiscale et sociale enrichie d'Intelligence Artificielle**
+<a href="#terminal-interactif"><img alt="Terminal" src="https://img.shields.io/badge/%3E_Terminal-0B1020?style=for-the-badge"></a>
+<a href="#projet-phare"><img alt="Projets" src="https://img.shields.io/badge/Projets-FF6B35?style=for-the-badge"></a>
+<a href="#mes-outils"><img alt="Outils" src="https://img.shields.io/badge/Outils-14B8A6?style=for-the-badge"></a>
+<a href="#mon-parcours"><img alt="Parcours" src="https://img.shields.io/badge/Parcours-8B5CF6?style=for-the-badge"></a>
+<a href="#contact"><img alt="Contact" src="https://img.shields.io/badge/Contact-0B1020?style=for-the-badge"></a>
 
-*Projet de Stage Technique — EST El Kelaa des Sraghna · Université Cadi Ayyad · 2025–2026*
+<br><br>
+
+*Je transforme des idées en applications complètes : de la base de données à l'interface, avec une touche d'intelligence artificielle.*
+
+![Projets](https://img.shields.io/badge/projets%20réalisés-6-FF6B35?style=flat-square)
+![Stages](https://img.shields.io/badge/stages-2-14B8A6?style=flat-square)
+![DUT](https://img.shields.io/badge/DUT-validé%202026-8B5CF6?style=flat-square)
+![Langues](https://img.shields.io/badge/langues-3-FFB84D?style=flat-square)
 
 </div>
 
----
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
-##  Présentation
+## Choisis ton chemin
 
-**RC Gestion** est une application web complète développée pour le bureau **RC Gestion** d'El Kelaa des Sraghna, spécialisé dans la création d'entreprises, la gestion comptable et les déclarations fiscales.
+<table>
+<tr>
+<td width="33%" valign="top">
 
-L'application centralise la gestion des clients, déclarations, comptabilité et paie, et intègre un **module d'Intelligence Artificielle** capable de prédire les risques de retard fiscal, prévoir le chiffre d'affaires et détecter les anomalies comptables.
+**Tu recrutes ?**
 
----
+Mon projet phare, mon parcours et mes stages.
 
-##  Fonctionnalités
+[Voir le projet phare](#projet-phare)
+[Voir mon parcours](#mon-parcours)
 
-###  Gestion des Clients
-- Gestion des **Personnes Physiques** (PP) et **Personnes Morales** (PM)
-- Fiche client complète : CIN / RC / IF / Patente / ICE / secteur / régime fiscal
-- Filtres avancés, export Excel, recherche en temps réel
+</td>
+<td width="33%" valign="top">
 
-###  Déclarations Fiscales
-- Suivi TVA, IS, IR, CNSS, Patente
-- Historique par client avec statuts (Déposée / En attente / En retard)
-- Mise à jour rapide des statuts et montants payés
-- Export Excel & PDF
+**Tu es développeur·se ?**
 
-###  Comptabilité
-- Journal des opérations (Factures Vente/Achat, Notes de frais)
-- Bilan simplifié automatique (Actif / Passif / Résultat)
-- Calcul automatique TVA (HT → TVA → TTC)
+Mes projets, mon code et mes outils.
 
-###  Gestion de la Paie
-- Simulateur de salaire avec calcul automatique :
-  - CNSS salariale & patronale
-  - AMO salariale & patronale
-  - IR mensuel (barème marocain 2024)
-- Bulletins de paie PDF téléchargeables
-- Historique par employé
+[Voir les autres projets](#autres-projets)
+[Voir mes outils](#mes-outils)
 
-###  Création d'Entreprises
-- Suivi des étapes : Statuts → RC → IF → Patente → ICE → CNSS → Compte bancaire
-- Tableau de bord visuel de progression
+</td>
+<td width="33%" valign="top">
 
-###  Intelligence Artificielle
-| Modèle | Fonctionnalité |
-|--------|----------------|
-| **Random Forest** | Prédiction du risque de retard fiscal par client |
-| **Régression Linéaire** | Prévision du chiffre d'affaires mensuel |
-| **Isolation Forest** | Détection d'anomalies sur les montants déclarés |
+**Tu es curieux·se ?**
 
-###  Rapports & Exports
-- Rapport général PDF du cabinet
-- Fiches clients PDF individuelles
-- Export Excel multi-feuilles complet
+Interroge mon terminal, ou essaie mon portfolio interactif.
 
----
+[Ouvrir le terminal](#terminal-interactif)
+[Aller au portfolio](https://chaymae-el-bahloul.github.io)
 
-##  Stack Technique
+</td>
+</tr>
+</table>
 
-```
-Backend & Data    →  Python 3.11 · SQLite · Pandas · NumPy
-Machine Learning  →  Scikit-learn (RandomForest · LinearRegression · IsolationForest)
-Interface Web     →  Streamlit · Plotly Express · Plotly Graph Objects
-Exports           →  ReportLab (PDF) · OpenPyXL (Excel)
-Base de données   →  SQLite3 (local, sans serveur)
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
+
+## Terminal interactif
+
+*Clique sur une commande pour voir la réponse.*
+
+<details>
+<summary><code>$ about</code></summary>
+
+```text
+Chaymae El Bahloul, étudiante en Bachelor Science des Données (EST Kelâa des Sraghna)
+après un DUT en Ingénierie des Données. Je transforme des idées en applications
+complètes : base de données, interface et IA.
 ```
 
----
+</details>
 
-##  Structure du Projet
+<details>
+<summary><code>$ stack</code></summary>
 
-```
-RC_Gestion_/
-│
-├── app.py              # Application principale Streamlit (UI + navigation)
-├── db.py               # Couche données SQLite (CRUD + seed demo)
-├── ai.py               # Module IA (Random Forest, Régression, Isolation Forest)
-├── pdf_reports.py      # Génération des rapports PDF (ReportLab)
-│
-├── requirements.txt    # Dépendances Python
-├── .gitignore          # Fichiers exclus du versioning
-└── README.md           # Documentation
+```text
+Python, R, SQL, JavaScript, PHP, C
+Flask, Streamlit, SQLAlchemy
+MySQL, SQLite
+Hadoop, Kafka, Apache Spark, Power BI
+Docker, Git
 ```
 
----
+</details>
 
-##  Installation & Lancement
+<details>
+<summary><code>$ projets</code></summary>
 
-### 1. Cloner le projet
-```bash
-git clone https://github.com/votre-username/rc-gestion-pro.git
-cd rc-gestion
+```text
+RC Gestion             Streamlit, paie, rapports PDF, IA   (projet phare)
+GraphGen               Flask, Plotly, Docker               (en binôme)
+Smart Data Pipeline    pipeline de données                 (en binôme, PFE)
+Dashboard supermarché  Python, Jupyter
+Gestion de congés      Flask, bilingue FR/AR               (stage 2025)
+AI ChatBot             API Gemini
+stadium_db             C, GTK, MySQL
 ```
 
-### 2. Créer un environnement virtuel (recommandé)
-```bash
-python -m venv venv
-venv\Scripts\activate        # Windows
+</details>
+
+<details>
+<summary><code>$ parcours</code></summary>
+
+```text
+2026-2027        Bachelor Science des Données (en cours)
+avril-juin 2026  Stage : RC Gestion
+2024-2026        DUT Ingénierie des Données
+juin-juil. 2025  Stage : gestion de congés, Commune de Kelâa des Sraghna
+2023-2024        Baccalauréat Sciences Physiques
 ```
 
-### 3. Installer les dépendances
-```bash
-pip install -r requirements.txt
+</details>
+
+<details>
+<summary><code>$ langues</code></summary>
+
+```text
+arabe (langue maternelle) · français (professionnel) · anglais (professionnel)
 ```
 
-### 4. Lancer l'application
-```bash
-streamlit run app.py
+</details>
+
+<details>
+<summary><code>$ contact</code></summary>
+
+```text
+c.elbahloul2898@uca.ac.ma
+linkedin.com/in/chaymae-el-bahloul
+github.com/Chaymae-El-Bahloul
 ```
 
-L'application s'ouvre automatiquement sur `http://localhost:8501`
+</details>
 
----
+<details>
+<summary><code>$ sudo recruter chaymae</code></summary>
 
-##  Comptes de démonstration
-
-| Rôle | Identifiant | Mot de passe | Accès |
-|------|-------------|--------------|-------|
-| Administrateur | `admin` | `admin123` | Toutes les fonctionnalités |
-| Comptable | `comptable` | `compta456` | Déclarations, comptabilité, paie |
-| Client | `client` | `client789` | Consultation dossier personnel |
-
----
-
-##  Module Intelligence Artificielle
-
-### Prédiction de Retard (Random Forest)
-Analyse l'historique des déclarations de tous les clients pour entraîner un modèle de classification. Prédit la probabilité qu'un client soit en retard pour une déclaration donnée.
-
-```
-Entrées  : type_déclaration · secteur_activité · mode_déclaration · type_personne · montant
-Sortie   : probabilité de retard (0% → 100%) + niveau (Faible / Modéré / Élevé)
+```text
+[sudo] mot de passe : ********
+Permission accordée.
+Étape suivante : écrire à c.elbahloul2898@uca.ac.ma
 ```
 
-### Prévision CA (Régression Linéaire)
-Analyse les factures de vente historiques du client et projette le chiffre d'affaires probable pour le mois suivant.
+</details>
 
-```
-Entrées  : historique des factures de vente (minimum 3 mois)
-Sortie   : CA prévisionnel en MAD + graphique de tendance
-```
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
-### Détection d'Anomalies (Isolation Forest)
-Détecte les déclarations dont les montants sont statistiquement anormaux par rapport à l'historique du cabinet.
+## Qui suis-je ?
 
-```
-Entrées  : montant_dû · montant_payé de toutes les déclarations
-Sortie   : liste des déclarations suspectes avec client et type
-```
+<img align="right" src="assets/photo.png" alt="Chaymae El Bahloul" width="170">
 
----
+J'aime construire des applications complètes autour des données : interface, logique métier, base de données et intelligence artificielle. Chaque projet est l'occasion d'apprendre une nouvelle brique, de la paie au chatbot en passant par la visualisation.
 
-##  Dépendances
-
-```txt
-streamlit
-pandas
-numpy
-scikit-learn
-plotly
-reportlab
-openpyxl
+```python
+chaymae = {
+    "etudes":  "Bachelor Science des Données (EST Kelâa des Sraghna)",
+    "base":    "DUT Ingénierie des Données, Université Cadi Ayyad",
+    "stack":   ["Python", "SQL", "Flask", "Streamlit"],
+    "passion": "IA & Data",
+    "lieu":    "El Kelâa des Sraghna, Maroc",
+    "langues": ["arabe", "français", "anglais"],
+}
 ```
 
-> Installation complète : `pip install -r requirements.txt`
+<br clear="all">
 
----
+<p align="center"><img src="assets/method.svg" alt="Ma méthode : une idée, une base de données, la logique métier, l'interface, une touche d'IA, puis une application prête" width="100%"></p>
 
-##  Auteure
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
 
-**Chaymae  EL BAHLOUL—** Étudiante en 2ème année Ingénierie des Données  
-École Supérieure de Technologie (EST) El Kelaa des Sraghna  
-Université Cadi Ayyad — Marrakech
+## Projet phare
 
-**Stage réalisé chez :** RC Gestion · Bureau de Conseil et Gestion d'Entreprises · El Kelaa des Sraghna
+> ### RC Gestion
+> **Une application web qui digitalise la gestion d'un cabinet comptable.**
+> Dossiers clients (personnes physiques et morales), déclarations fiscales, comptabilité simplifiée, paie et suivi de création d'entreprises.
+> Elle génère automatiquement bulletins de paie, fiches clients et rapports PDF, envoie des alertes et intègre un module d'IA. Trois rôles : **Admin**, **Comptable**, **Client**.
+>
+> ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white) ![IA](https://img.shields.io/badge/IA-FF6B35) ![PDF](https://img.shields.io/badge/Rapports%20PDF-0B1020)
+>
+> **[Voir le code](https://github.com/Chaymae-El-Bahloul/RC-GESTION)**
 
----
+<details>
+<summary><b>Découvrir comment RC Gestion est construit</b></summary>
+<br>
 
+| Fichier | Rôle |
+| --- | --- |
+| `app.py` | interface et navigation |
+| `db.py` | logique métier et données |
+| `pdf_reports.py` | bulletins et rapports |
+| `ai.py` | modèles d'IA |
 
+</details>
 
+## Autres projets
 
+*Clique sur un projet pour le déplier.*
+
+<details>
+<summary><b>GraphGen</b> · analyse de données en quelques clics <i>(en binôme)</i></summary>
+<br>
+
+Importe un fichier **CSV ou Excel** et obtiens une analyse exploratoire (profil des colonnes, valeurs manquantes, corrélations) et des graphiques interactifs, sans écrire une ligne de code.
+
+**Qualité :** 12 tests automatiques, intégration continue GitHub Actions, conteneur Docker.
+
+`Flask` `pandas` `Plotly` `Docker` `pytest`
+
+[Voir le code](https://github.com/Chaymae-El-Bahloul/GraphGen)
+
+</details>
+
+<details>
+<summary><b>Smart Data Pipeline</b> · projet de fin d'études <i>(en binôme)</i></summary>
+<br>
+
+Pipeline de données auto-adaptatif, réalisé pour le projet de fin d'études du DUT.
+
+`Python` `Pipeline de données`
+
+[Voir le code](https://github.com/Samah-boudallaa/smart-data-pipeline-pfe)
+
+</details>
+
+<details>
+<summary><b>Dashboard supermarché</b> · visualiser les ventes</summary>
+<br>
+
+Tableau de bord d'analyse et de visualisation des données de ventes d'un supermarché, réalisé dans un notebook Jupyter.
+
+`Python` `Jupyter`
+
+[Voir le code](https://github.com/Chaymae-El-Bahloul/dashboard-supermarche)
+
+</details>
+
+<details>
+<summary><b>Gestion de congés</b> · stage 2025, Commune de Kelâa des Sraghna</summary>
+<br>
+
+Suivi des employés, demandes et validation hiérarchique des congés, statistiques automatiques. Interface **bilingue français / arabe**.
+
+`Flask` `SQLAlchemy` `SQLite`
+
+</details>
+
+<details>
+<summary><b>AI ChatBot</b> · un assistant multilingue</summary>
+<br>
+
+Chatbot multilingue basé sur l'API Gemini, avec gestion des requêtes des utilisateurs.
+
+`Python` `Gemini API`
+
+</details>
+
+<details>
+<summary><b>stadium_db</b> · gérer des étudiants (CRUD)</summary>
+<br>
+
+Application de bureau de gestion d'étudiants (création, lecture, modification, suppression), connectée à une base MySQL.
+
+`C` `GTK` `MySQL`
+
+[Voir le code](https://github.com/Chaymae-El-Bahloul/stadium_db)
+
+</details>
+
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
+
+## Mes outils
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=py,r,js,php,c,flask,mysql,sqlite,spark,kafka,hadoop,powerbi,docker,git,linux,vscode&perline=8" alt="Outils : Python, R, JavaScript, PHP, C, Flask, MySQL, SQLite, Spark, Kafka, Hadoop, Power BI, Docker, Git, Linux, VS Code">
+</p>
+
+*Déplie un domaine pour voir le détail.*
+
+<details><summary><b>Langages</b></summary>
+
+Python, R, SQL, JavaScript, PHP, C
+
+</details>
+
+<details><summary><b>Web et applications</b></summary>
+
+Flask, Streamlit, SQLAlchemy, HTML / CSS
+
+</details>
+
+<details><summary><b>Bases de données</b></summary>
+
+MySQL, Oracle SQL Developer, SQLite, Data Warehouse
+
+</details>
+
+<details><summary><b>Big Data et analyse</b></summary>
+
+Hadoop, Kafka, Apache Spark, Power BI, Data Mining, apprentissage automatique
+
+</details>
+
+<details><summary><b>Intelligence artificielle</b></summary>
+
+IA générative, API Gemini, Microsoft 365 Copilot
+
+</details>
+
+<details><summary><b>Outils de travail</b></summary>
+
+Git / GitHub, Docker, Ubuntu, WSL, VirtualBox, VS Code
+
+</details>
+
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
+
+## Mon parcours
+
+| Quand | Quoi |
+| --- | --- |
+| **2026 – 2027** | Bachelor Science des Données, EST Kelâa des Sraghna *(en cours)* |
+| **Avril – juin 2026** | **Stage** : développement de RC Gestion (architecture en couches, calcul de la paie, bulletins automatiques, contrôle d'accès par rôle) |
+| **2024 – 2026** | DUT Ingénierie des Données, EST Kelâa des Sraghna, Université Cadi Ayyad |
+| **Juin – juillet 2025** | **Stage** : application web de gestion des congés pour la Commune de Kelâa des Sraghna |
+| **2023 – 2024** | Baccalauréat Sciences Physiques, Lycée Al Maghrib Al Arabi |
+
+<details>
+<summary><b>Langues et certifications</b></summary>
+<br>
+
+**Langues :** arabe (langue maternelle) · français (professionnel) · anglais (professionnel)
+
+**Certifications :** Career Essentials in Generative AI · Learning Microsoft 365 Copilot
+
+</details>
+
+<p align="center"><img src="assets/divider.svg" alt="" width="100%"></p>
+
+## Contact
+
+<div align="center">
+
+### Une question, une idée de projet ?
+
+<a href="mailto:c.elbahloul2898@uca.ac.ma"><img alt="E-mail" src="https://img.shields.io/badge/E--mail-FF6B35?style=for-the-badge&logo=gmail&logoColor=white"></a>
+<a href="https://www.linkedin.com/in/chaymae-el-bahloul"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"></a>
+<a href="https://chaymae-el-bahloul.github.io"><img alt="Portfolio" src="https://img.shields.io/badge/Portfolio%20interactif-0B1020?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
+
+<sub>Mon portfolio a un vrai terminal et un menu rapide : essaie Ctrl / ⌘ + K.</sub>
+
+</div>
+
+<p align="center"><img src="assets/footer.svg" alt="Construisons quelque chose avec des données" width="100%"></p>
